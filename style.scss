@@ -25,11 +25,15 @@
         }
         .selected {
             box-sizing: border-box;
-            box-shadow:inset 0px 0px 0px 6px #84d8ff;
+            box-shadow:inset 0px 0px 0px 8px #84d8ff;
         }
-        .highlighted {
+        .move {
             box-sizing: border-box;
-            box-shadow:inset 0px 0px 0px 6px #f9af70;
+            box-shadow:inset 0px 0px 0px 8px #f9af70;
+        }
+        .strike {
+            box-sizing: border-box;
+            box-shadow:inset 0px 0px 0px 8px #e53a2d;
         }
     }
 }
