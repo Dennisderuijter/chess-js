@@ -93,25 +93,46 @@ function checkMoves(y, x) {
     switch (unit) {
         case 'p': // PAWN
             var pawn = [];
+            var strike = [];
             switch (unitColor) {
                 case 'l':
                     if (b[y-1] !== undefined && b[y-1][x] !== undefined && b[y-1][x] == '--') {
                         var pawnY = y-1;
                         pawn.push('b[' + pawnY + '][' + x + ']');
-                        if (b[y-2] !== undefined && b[y-2][x] !== undefined) {
-                            var pawnY = y-2;
+                        if (b[y-2] !== undefined && b[y-2][x] !== undefined && y == 6) {
+                            pawnY = y-2;
                             pawn.push('b[' + pawnY + '][' + x + ']');
                         }
+                    }
+                    if (b[y-1] !== undefined && b[y-1][x+1] !== undefined && b[y-1][x+1].substr(1, 1) == 'd') {
+                        var pawnY = y-1;
+                        var pawnX = x+1;
+                        strike.push('b[' + pawnY + '][' + pawnX + ']');
+                    }
+                    if (b[y-1] !== undefined && b[y-1][x-1] !== undefined && b[y-1][x-1].substr(1, 1) == 'd') {
+                        var pawnY = y-1;
+                        var pawnX = x-1;
+                        strike.push('b[' + pawnY + '][' + pawnX + ']');
                     }
                     break;
                 case 'd':
                     if (b[y+1] !== undefined && b[y+1][x] !== undefined && b[y+1][x] == '--') {
                         var pawnY = y+1;
                         pawn.push('b[' + pawnY + '][' + x + ']');
-                        if (b[y+2] !== undefined && b[y+2][x] !== undefined) {
-                            var pawnY = y+2;
+                        if (b[y+2] !== undefined && b[y+2][x] !== undefined && y == 1) {
+                            pawnY = y+2;
                             pawn.push('b[' + pawnY + '][' + x + ']');
                         }
+                    }
+                    if (b[y+1] !== undefined && b[y+1][x+1] !== undefined && b[y+1][x+1].substr(1, 1) == 'l') {
+                        var pawnY = y+1;
+                        var pawnX = x+1;
+                        strike.push('b[' + pawnY + '][' + pawnX + ']');
+                    }
+                    if (b[y+1] !== undefined && b[y+1][x-1] !== undefined && b[y+1][x-1].substr(1, 1) == 'l') {
+                        var pawnY = y+1;
+                        var pawnX = x-1;
+                        strike.push('b[' + pawnY + '][' + pawnX + ']');
                     }
                     break;
             }
@@ -120,6 +141,13 @@ function checkMoves(y, x) {
                 var px = pawn[i].substr(5, 1);
                 if (b[py][px] == '--') {
                     $('.board .row_' + py + ' .cel_' + px).addClass('move');
+                }
+            }
+            for (var i = 0; i < strike.length; i++) {
+                var sy = strike[i].substr(2, 1);
+                var sx = strike[i].substr(5, 1);
+                if (b[sy][sx].substr(1, 1) == 'd' && unitColor == 'l' || b[sy][sx].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + sy + ' .cel_' + sx).addClass('strike');
                 }
             }
             break;
@@ -164,8 +192,13 @@ function checkMoves(y, x) {
             for (var i = 0; i < king.length; i++) {
                 var ky = king[i].substr(2, 1);
                 var kx = king[i].substr(5, 1);
-                if (b[ky][kx] == '--') {
-                    $('.board .row_' + ky + ' .cel_' + kx).addClass('move');
+                switch (true) {
+                    case b[ky][kx] == '--':
+                        $('.board .row_' + ky + ' .cel_' + kx).addClass('move');
+                        break;
+                    case b[ky][kx].substr(1, 1) == 'd' && unitColor == 'l' || b[ky][kx].substr(1, 1) == 'l' && unitColor == 'd':
+                        $('.board .row_' + ky + ' .cel_' + kx).addClass('strike');
+                        break;
                 }
             }
             break;
@@ -173,6 +206,9 @@ function checkMoves(y, x) {
             for (var i = y - 1; i >= 0; i--) { // UP
                 if (b[i][x] == '--') {
                     $('.board .row_' + i + ' .cel_' + x).addClass('move');
+                } else if (b[i][x].substr(1, 1) == 'd' && unitColor == 'l' || b[i][x].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + x).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -180,6 +216,9 @@ function checkMoves(y, x) {
             for (var i = y + 1; i < b.length; i++) { // DOWN
                 if (b[i][x] == '--') {
                     $('.board .row_' + i + ' .cel_' + x).addClass('move');
+                } else if (b[i][x].substr(1, 1) == 'd' && unitColor == 'l' || b[i][x].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + x).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -187,6 +226,9 @@ function checkMoves(y, x) {
             for (var i = x - 1; i >= 0; i--) { // LEFT
                 if (b[y][i] == '--') {
                     $('.board .row_' + y + ' .cel_' + i).addClass('move');
+                } else if (b[y][i].substr(1, 1) == 'd' && unitColor == 'l' || b[y][i].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + y + ' .cel_' + i).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -194,6 +236,9 @@ function checkMoves(y, x) {
             for (var i = x + 1; i < b[y].length; i++) { // RIGHT
                 if (b[y][i] == '--') {
                     $('.board .row_' + y + ' .cel_' + i).addClass('move');
+                } else if (b[y][i].substr(1, 1) == 'd' && unitColor == 'l' || b[y][i].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + y + ' .cel_' + i).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -201,6 +246,9 @@ function checkMoves(y, x) {
             for (var i = y - 1, j = x + 1; i >= 0 && j < b.length; i--, j++) { // UP-RIGHT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -208,6 +256,9 @@ function checkMoves(y, x) {
             for (var i = y + 1, j = x + 1; i < b.length && j < b.length; i++, j++) { // DOWN-RIGHT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -215,6 +266,9 @@ function checkMoves(y, x) {
             for (var i = y + 1, j = x - 1; i < b.length && j >= 0; i++, j--) { // DOWN-LEFT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -222,6 +276,9 @@ function checkMoves(y, x) {
             for (var i = y - 1, j = x - 1; i >= 0 && j >= 0; i--, j--) { // UP-LEFT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -231,6 +288,9 @@ function checkMoves(y, x) {
             for (var i = y - 1; i >= 0; i--) { // UP
                 if (b[i][x] == '--') {
                     $('.board .row_' + i + ' .cel_' + x).addClass('move');
+                } else if (b[i][x].substr(1, 1) == 'd' && unitColor == 'l' || b[i][x].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + x).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -238,6 +298,9 @@ function checkMoves(y, x) {
             for (var i = y + 1; i < b.length; i++) { // DOWN
                 if (b[i][x] == '--') {
                     $('.board .row_' + i + ' .cel_' + x).addClass('move');
+                } else if (b[i][x].substr(1, 1) == 'd' && unitColor == 'l' || b[i][x].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + x).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -245,6 +308,9 @@ function checkMoves(y, x) {
             for (var i = x - 1; i >= 0; i--) { // LEFT
                 if (b[y][i] == '--') {
                     $('.board .row_' + y + ' .cel_' + i).addClass('move');
+                } else if (b[y][i].substr(1, 1) == 'd' && unitColor == 'l' || b[y][i].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + y + ' .cel_' + i).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -252,6 +318,9 @@ function checkMoves(y, x) {
             for (var i = x + 1; i < b[y].length; i++) { // RIGHT
                 if (b[y][i] == '--') {
                     $('.board .row_' + y + ' .cel_' + i).addClass('move');
+                } else if (b[y][i].substr(1, 1) == 'd' && unitColor == 'l' || b[y][i].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + y + ' .cel_' + i).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -306,10 +375,7 @@ function checkMoves(y, x) {
                     case b[ny][nx] == '--':
                         $('.board .row_' + ny + ' .cel_' + nx).addClass('move');
                         break;
-                    case b[ny][nx].substr(1, 1) == 'd' && unitColor == 'l':
-                        $('.board .row_' + ny + ' .cel_' + nx).addClass('strike');
-                        break;
-                    case b[ny][nx].substr(1, 1) == 'l' && unitColor == 'd':
+                    case b[ny][nx].substr(1, 1) == 'd' && unitColor == 'l' || b[ny][nx].substr(1, 1) == 'l' && unitColor == 'd':
                         $('.board .row_' + ny + ' .cel_' + nx).addClass('strike');
                         break;
                 }
@@ -319,6 +385,9 @@ function checkMoves(y, x) {
             for (var i = y - 1, j = x + 1; i >= 0 && j < b.length; i--, j++) { // UP-RIGHT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -326,6 +395,9 @@ function checkMoves(y, x) {
             for (var i = y + 1, j = x + 1; i < b.length && j < b.length; i++, j++) { // DOWN-RIGHT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -333,6 +405,9 @@ function checkMoves(y, x) {
             for (var i = y + 1, j = x - 1; i < b.length && j >= 0; i++, j--) { // DOWN-LEFT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
@@ -340,6 +415,9 @@ function checkMoves(y, x) {
             for (var i = y - 1, j = x - 1; i >= 0 && j >= 0; i--, j--) { // UP-LEFT
                 if (b[i][j] == '--') {
                     $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
+                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    break;
                 } else {
                     break;
                 }
