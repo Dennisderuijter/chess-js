@@ -15,6 +15,18 @@ var turn = player.light;
 var selectedUnit = '';
 var selectedUnitY = '';
 var selectedUnitX = '';
+var lastMove = {
+    l: {
+        x: '',
+        y: '',
+        unit: ''
+    },
+    d: {
+        x: '',
+        y: '',
+        unit: ''
+    }
+};
 
 $(document).ready(function(){
 
@@ -431,6 +443,19 @@ function move(unit, unitY, unitX, y, x) {
 
     b[y][x] = unit;
     b[unitY][unitX] = '--';
+
+    switch (unit.substr(1, 1)) {
+        case 'l':
+            lastMove.l.y = y;
+            lastMove.l.x = x;
+            lastMove.l.unit = unit;
+            break;
+        case 'd':
+            lastMove.d.y = y;
+            lastMove.d.x = x;
+            lastMove.d.unit = unit;
+            break;
+    }
 
     swapTurn();
 
