@@ -10,6 +10,7 @@ var player = {
 };
 
 var b = [];
+var u = undefined;
 var turn = player.light;
 
 var selectedUnit = '';
@@ -165,51 +166,26 @@ function checkMoves(y, x) {
             break;
         case 'k': // KING
             var king = [];
-            if (b[y-1] !== undefined && b[y-1][x] !== undefined) {
-                var kingY = y-1;
-                king.push('b[' + kingY + '][' + x + ']');
-            }
-            if (b[y-1] !== undefined && b[y-1][x+1] !== undefined) {
-                var kingY = y-1;
-                var kingX = x+1;
-                king.push('b[' + kingY + '][' + kingX + ']');
-            }
-            if (b[y] !== undefined && b[y][x+1] !== undefined) {
-                var kingX = x+1;
-                king.push('b[' + y + '][' + kingX + ']');
-            }
-            if (b[y+1] !== undefined && b[y+1][x+1] !== undefined) {
-                var kingY = y+1;
-                var kingX = x+1;
-                king.push('b[' + kingY + '][' + kingX + ']');
-            }
-            if (b[y+1] !== undefined && b[y+1][x] !== undefined) {
-                var kingY = y+1;
-                king.push('b[' + kingY + '][' + x + ']');
-            }
-            if (b[y+1] !== undefined && b[y+1][x-1] !== undefined) {
-                var kingY = y+1;
-                var kingX = x-1;
-                king.push('b[' + kingY + '][' + kingX + ']');
-            }
-            if (b[y] !== undefined && b[y][x-1] !== undefined) {
-                var kingX = x-1;
-                king.push('b[' + y + '][' + kingX + ']');
-            }
-            if (b[y-1] !== undefined && b[y-1][x-1] !== undefined) {
-                var kingY = y-1;
-                var kingX = x-1;
-                king.push('b[' + kingY + '][' + kingX + ']');
-            }
+            var moves = [
+                {y: y-1, x: x},
+                {y: y-1, x: x+1},
+                {y: y,   x: x+1},
+                {y: y+1, x: x+1},
+                {y: y+1, x: x},
+                {y: y+1, x: x-1},
+                {y: y,   x: x-1},
+                {y: y-1, x: x-1}
+            ];
+            allMoves(y, x, moves, king);
             for (var i = 0; i < king.length; i++) {
                 var ky = king[i].substr(2, 1);
                 var kx = king[i].substr(5, 1);
                 switch (true) {
                     case b[ky][kx] == '--':
-                        $('.board .row_' + ky + ' .cel_' + kx).addClass('move');
+                        addMove(ky, kx);
                         break;
                     case b[ky][kx].substr(1, 1) == 'd' && unitColor == 'l' || b[ky][kx].substr(1, 1) == 'l' && unitColor == 'd':
-                        $('.board .row_' + ky + ' .cel_' + kx).addClass('strike');
+                        addStrike(ky, kx);
                         break;
                 }
             }
@@ -340,55 +316,26 @@ function checkMoves(y, x) {
             break;
         case 'n': // KNIGHT
             var knight = [];
-            if (b[y-2] !== undefined && b[y-2][x-1] !== undefined) {
-                var knightY = y-2;
-                var knightX = x-1;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y-2] !== undefined && b[y-2][x+1] !== undefined) {
-                var knightY = y-2;
-                var knightX = x+1;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y-1] !== undefined && b[y-1][x-2] !== undefined) {
-                var knightY = y-1;
-                var knightX = x-2;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y-1] !== undefined && b[y-1][x+2] !== undefined) {
-                var knightY = y-1;
-                var knightX = x+2;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y+1] !== undefined && b[y+1][x-2] !== undefined) {
-                var knightY = y+1;
-                var knightX = x-2;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y+1] !== undefined && b[y+1][x+2] !== undefined) {
-                var knightY = y+1;
-                var knightX = x+2;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y+2] !== undefined && b[y+2][x-1] !== undefined) {
-                var knightY = y+2;
-                var knightX = x-1;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
-            if (b[y+2] !== undefined && b[y+2][x+1] !== undefined) {
-                var knightY = y+2;
-                var knightX = x+1;
-                knight.push('b[' + knightY + '][' + knightX + ']');
-            }
+            var moves = [
+                {y: y-2, x: x-1},
+                {y: y-2, x: x+1},
+                {y: y-1, x: x-2},
+                {y: y-1, x: x+2},
+                {y: y+1, x: x-2},
+                {y: y+1, x: x+2},
+                {y: y+2, x: x-1},
+                {y: y+2, x: x+1}
+            ];
+            allMoves(y, x, moves, knight);
             for (var i = 0; i < knight.length; i++) {
                 var ny = knight[i].substr(2, 1);
                 var nx = knight[i].substr(5, 1);
                 switch (true) {
                     case b[ny][nx] == '--':
-                        $('.board .row_' + ny + ' .cel_' + nx).addClass('move');
+                        addMove(ny, nx);
                         break;
                     case b[ny][nx].substr(1, 1) == 'd' && unitColor == 'l' || b[ny][nx].substr(1, 1) == 'l' && unitColor == 'd':
-                        $('.board .row_' + ny + ' .cel_' + nx).addClass('strike');
+                        addStrike(ny, nx);
                         break;
                 }
             }
@@ -396,9 +343,9 @@ function checkMoves(y, x) {
         case 'b': // BISHOP
             for (var i = y - 1, j = x + 1; i >= 0 && j < b.length; i--, j++) { // UP-RIGHT
                 if (b[i][j] == '--') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                    addMove(i, j);
                 } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    addStrike(i, j);
                     break;
                 } else {
                     break;
@@ -406,9 +353,9 @@ function checkMoves(y, x) {
             }
             for (var i = y + 1, j = x + 1; i < b.length && j < b.length; i++, j++) { // DOWN-RIGHT
                 if (b[i][j] == '--') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                    addMove(i, j);
                 } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    addStrike(i, j);
                     break;
                 } else {
                     break;
@@ -416,9 +363,9 @@ function checkMoves(y, x) {
             }
             for (var i = y + 1, j = x - 1; i < b.length && j >= 0; i++, j--) { // DOWN-LEFT
                 if (b[i][j] == '--') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                    addMove(i, j);
                 } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    addStrike(i, j);
                     break;
                 } else {
                     break;
@@ -426,9 +373,9 @@ function checkMoves(y, x) {
             }
             for (var i = y - 1, j = x - 1; i >= 0 && j >= 0; i--, j--) { // UP-LEFT
                 if (b[i][j] == '--') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('move');
+                    addMove(i, j);
                 } else if (b[i][j].substr(1, 1) == 'd' && unitColor == 'l' || b[i][j].substr(1, 1) == 'l' && unitColor == 'd') {
-                    $('.board .row_' + i + ' .cel_' + j).addClass('strike');
+                    addStrike(i, j);
                     break;
                 } else {
                     break;
@@ -437,6 +384,23 @@ function checkMoves(y, x) {
             break;
     }
 
+}
+
+// Knight and King
+function allMoves(y, x, moves, array) {
+    for (var i = 0; i < moves.length; i++) {
+        if (b[moves[i].y] !== u && b[moves[i].y][moves[i].x] !== u) {
+            array.push('b[' + moves[i].y + '][' + moves[i].x + ']');
+        }
+    }
+}
+
+function addMove(y, x) {
+    $('.board .row_' + y + ' .cel_' + x).addClass('move');
+}
+
+function addStrike(y, x) {
+    $('.board .row_' + y + ' .cel_' + x).addClass('strike');
 }
 
 function move(unit, unitY, unitX, y, x) {
