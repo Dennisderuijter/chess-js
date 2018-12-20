@@ -30,9 +30,7 @@ var lastMove = {
 };
 
 $(document).ready(function(){
-
     createBoard();
-
     $('.board .row .cel').click(function() {
         var selectedCel = $(this).attr('class').match(/[\w-]*_[\w-]*/g)[0].split("_").pop();
         var selectedRow = $(this).parent().attr('class').match(/[\w-]*_[\w-]*/g)[0].split("_").pop();
@@ -58,11 +56,9 @@ $(document).ready(function(){
             $('.board').find('.strike').removeClass('strike');
         }
     });
-
 });
 
 function createBoard() {
-
     for (var y = 0; y < 8; y++) {
         $('.board').append('<tr class="row row_' + y + '"></tr>');
         b[y] = [];
@@ -74,19 +70,15 @@ function createBoard() {
     }
 
     b[0] = ['rd', 'nd', 'bd', 'qd', 'kd', 'bd', 'nd', 'rd'];
-    b[1].fill('pd');
-
-    b[6].fill('pl');
+    //b[1].fill('pd');
+    //b[6].fill('pl');
     b[7] = ['rl', 'nl', 'bl', 'ql', 'kl', 'bl', 'nl', 'rl'];
 
-    console.log(b);
-
+    checkBoard();
     draw();
-
 }
 
 function draw() {
-
     for (var y = 0; y < b.length; y++) {
         for (var x = 0; x < b[y].length; x++) {
             if (b[y][x] != '--') {
@@ -96,11 +88,9 @@ function draw() {
             }
         }
     }
-
 }
 
 function checkMoves(y, x) {
-
     var unit = b[y][x].slice(0, -1);
     var unitColor = b[y][x].slice(1);
     switch (unit) {
@@ -383,7 +373,6 @@ function checkMoves(y, x) {
             }
             break;
     }
-
 }
 
 // Knight and King
@@ -404,10 +393,8 @@ function addStrike(y, x) {
 }
 
 function move(unit, unitY, unitX, y, x) {
-
     b[y][x] = unit;
     b[unitY][unitX] = '--';
-
     switch (unit.substr(1, 1)) {
         case 'l':
             lastMove.l.y = y;
@@ -420,15 +407,12 @@ function move(unit, unitY, unitX, y, x) {
             lastMove.d.unit = unit;
             break;
     }
-
     swapTurn();
-
 }
 
 function swapTurn() {
-
     draw();
-    console.log(b);
+    checkBoard();
 
     if (turn == player.light) {
         turn = player.dark
@@ -437,5 +421,13 @@ function swapTurn() {
         turn = player.light
         console.log('Next move ' + player.light.name + '!');
     }
+}
 
+function checkBoard() {
+    console.log(b);
+    for (var y = 0; y < 8; y++) {
+        for (var x = 0; x < 8; x++) {
+            checkMoves(y, x);
+        }
+    }
 }
