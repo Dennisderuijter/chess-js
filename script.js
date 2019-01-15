@@ -46,10 +46,10 @@ $(document).ready(function(){
             $(this).addClass('selected');
             checkMoves(parseInt(selectedRow), parseInt(selectedCel));
         } else if ($(this).hasClass('move') || $(this).hasClass('strike')) {
-            move(selectedUnit, selectedUnitY, selectedUnitX, selectedRow, selectedCel);
             $('.board').find('.selected').removeClass('selected');
             $('.board').find('.move').removeClass('move');
             $('.board').find('.strike').removeClass('strike');
+            move(selectedUnit, selectedUnitY, selectedUnitX, selectedRow, selectedCel);
         } else {
             $('.board').find('.selected').removeClass('selected');
             $('.board').find('.move').removeClass('move');
@@ -412,7 +412,6 @@ function move(unit, unitY, unitX, y, x) {
 
 function swapTurn() {
     draw();
-    checkBoard();
 
     if (turn == player.light) {
         turn = player.dark
@@ -421,13 +420,19 @@ function swapTurn() {
         turn = player.light
         console.log('Next move ' + player.light.name + '!');
     }
+
+    checkBoard();
 }
 
 function checkBoard() {
     console.log(b);
+    var enemyMoves = [];
     for (var y = 0; y < 8; y++) {
         for (var x = 0; x < 8; x++) {
-            checkMoves(y, x);
+            if (b[y][x].slice(1) != turn.color) {
+                checkMoves(y, x);
+            }
         }
     }
+
 }
